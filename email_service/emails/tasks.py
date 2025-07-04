@@ -11,3 +11,14 @@ def send_email_task(to_email):
 
 
 
+@shared_task
+def send_welcome_email(email, full_name):
+
+    payload = {
+        'to': email,
+        'subject': "Welcome to Our Store!",
+        'message': f" Hi {full_name} thank you for registering at our site. Hope you'd enjoy this journey with us"
+        
+    }
+
+    print(payload)
