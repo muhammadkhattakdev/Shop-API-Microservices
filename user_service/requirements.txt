@@ -2,3 +2,8 @@ Django>=4.2
 gunicorn
 psycopg2-binary
 requests
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+celery
+redis

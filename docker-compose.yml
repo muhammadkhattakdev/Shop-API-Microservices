@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 
 services:
   user-service:
@@ -11,6 +11,7 @@ services:
       - db
     env_file:
       - .env
+    restart: always
 
   product-service:
     build: ./product_service
@@ -22,6 +23,7 @@ services:
       - db
     env_file:
       - .env
+    restart: always
 
   email-service:
     build: ./email_service
@@ -31,19 +33,26 @@ services:
       - "8003:8000"
     depends_on:
       - redis
+      - db
     env_file:
       - .env
+    restart: always
 
   email-worker:
     build: ./email_service
-    command: celery -A email_service worker --loglevel=info
+    command: >
+      sh -c "sleep 10 && 
+             python manage.py migrate &&
+             celery -A email_service.celery_app worker --loglevel=info"
     volumes:
       - ./email_service:/app
     depends_on:
       - email-service
       - redis
+      - db
     env_file:
       - .env
+    restart: always
 
   db:
     image: postgres:15
@@ -61,7 +70,7 @@ services:
     image: redis:7
     ports:
       - "6379:6379"
+    restart: always
 
-      
 volumes:
   postgres_data:
